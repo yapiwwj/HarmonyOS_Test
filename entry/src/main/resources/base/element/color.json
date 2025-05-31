@@ -1,0 +1,36 @@
+{
+  "color": [
+    {
+      "name": "start_window_background",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "theme_button",
+      "value": "#3174d0"
+    },
+    {
+      "name": "top_title",
+      "value": "#333333"
+    },
+    {
+      "name": "top_subtitle",
+      "value": "#999999"
+    },
+    {
+      "name": "base_font",
+      "value": "#333333"
+    },
+    {
+      "name": "sub_font",
+      "value": "#999999"
+    },
+    {
+      "name": "blue_font",
+      "value": "#3174d0"
+    },
+    {
+      "name": "orange_font",
+      "value": "#FF6E00"
+    }
+  ]
+}

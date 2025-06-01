@@ -1,10 +1,10 @@
 import homeContent from "../home/homeContent"
+import UserCenterContent from "../usercenter/UserCenterContent"
 
 @Entry
 @Component
-@Preview
 struct LayoutIndex {
-  @State currentIndex: number = 0;
+  @State currentIndex: number = 2;
 
   @Builder
   tabBuilder(title: string, targetIndex: number, selectedImg: Resource, normalImg: Resource) {
@@ -31,7 +31,9 @@ struct LayoutIndex {
 
         TabContent()
           .tabBar(this.tabBuilder('创作', 1, $r('app.media.codesandbox_sel'), $r('app.media.codesandbox_normal')))
-        TabContent().tabBar(this.tabBuilder('我的', 2, $r('app.media.my_sel'), $r('app.media.my_normal')))
+        TabContent() {
+          UserCenterContent()
+        }.tabBar(this.tabBuilder('我的', 2, $r('app.media.my_sel'), $r('app.media.my_normal')))
       }.onChange((index: number) => {
         this.currentIndex = index
       })

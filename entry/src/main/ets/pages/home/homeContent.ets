@@ -86,10 +86,9 @@ export default struct homeContent {
         }
 
       }
-      .scrollBarColor(Color.Gray) // 滚动条颜色
       .scrollBarWidth(5) // 滚动条宽度
       .edgeEffect(EdgeEffect.Spring) // 滚动到边沿后回弹
 
-    }.width("100%").height("100%").padding({ left: 10, right: 10 }).justifyContent(FlexAlign.Start)
+    }.width("100%").padding({ left: 10, right: 10 }).justifyContent(FlexAlign.Start)
   }
 }

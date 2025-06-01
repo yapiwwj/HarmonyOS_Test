@@ -12,3 +12,4 @@ export interface ScalerInfoList {
   scalerID: number,
   username: string
 }
+

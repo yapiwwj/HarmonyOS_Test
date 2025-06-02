@@ -4,6 +4,8 @@
     "pages/Login_Register/login",
     "pages/Login_Register/register",
     "pages/layout/layoutIndex",
-    "pages/test/test"
+    "pages/test/test",
+    "pages/usercenter/searchPage",
+    "pages/usercenter/settings"
   ]
 }

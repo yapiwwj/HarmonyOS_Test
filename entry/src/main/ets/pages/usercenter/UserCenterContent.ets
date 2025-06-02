@@ -115,7 +115,6 @@ export default struct UserCenterContent {
             offsetY: 20
           })
           .borderRadius({ topLeft: 16, topRight: 16 })
-
         }
         .width("100%")
         .height(250)

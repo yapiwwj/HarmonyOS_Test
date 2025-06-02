@@ -20,7 +20,6 @@ class DividerTmp {
 
 @Entry
 @Component
-@Preview
 struct Settings {
   private setting_top: Setting[] = [
     {

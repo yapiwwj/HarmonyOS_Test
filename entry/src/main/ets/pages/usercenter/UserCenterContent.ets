@@ -33,7 +33,7 @@ export default struct UserCenterContent {
       id: 1,
       icon: $r("app.media.order"),
       title: "订单",
-      path: ""
+      path: "pages/usercenter/order"
     },
     {
       id: 2,

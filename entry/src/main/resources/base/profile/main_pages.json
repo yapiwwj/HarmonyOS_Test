@@ -6,6 +6,7 @@
     "pages/layout/layoutIndex",
     "pages/test/test",
     "pages/usercenter/searchPage",
-    "pages/usercenter/settings"
+    "pages/usercenter/settings",
+    "pages/usercenter/order"
   ]
 }

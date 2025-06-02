@@ -11,3 +11,11 @@ export interface Setting {
   title: string,
   path: string
 }
+
+export interface Order {
+  id: number,
+  img: Resource,
+  title: string,
+  state: string,
+  price: number
+}

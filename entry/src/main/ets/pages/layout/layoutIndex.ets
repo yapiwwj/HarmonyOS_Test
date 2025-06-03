@@ -4,9 +4,8 @@ import UserCenterContent from "../usercenter/UserCenterContent"
 
 @Entry
 @Component
-@Preview
 struct LayoutIndex {
-  @State currentIndex: number = 2;
+  @State currentIndex: number = 1;
 
   @Builder
   tabBuilder(title: string, targetIndex: number, selectedImg: Resource, normalImg: Resource) {
@@ -29,6 +28,7 @@ struct LayoutIndex {
       }) {
         TabContent() {
           homeContent()
+
         }.tabBar(this.tabBuilder('首页', 0, $r('app.media.home_sel'), $r('app.media.home_normal')))
 
         TabContent() {
@@ -38,6 +38,7 @@ struct LayoutIndex {
 
         TabContent() {
           UserCenterContent()
+
         }.tabBar(this.tabBuilder('我的', 2, $r('app.media.my_sel'), $r('app.media.my_normal')))
       }.onChange((index: number) => {
         this.currentIndex = index

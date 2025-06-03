@@ -75,6 +75,10 @@ struct Settings {
                 .width(20)
                 .margin(10)
               Text(item.title)
+              Blank()
+                .layoutWeight(1)
+              Image($r("sys.media.ohos_ic_public_arrow_right"))
+                .size({ height: 30, width: 30 })
             }
             .width('100%')
             .onClick(() => {
@@ -104,6 +108,10 @@ struct Settings {
                 .width(20)
                 .margin(10)
               Text(item.title)
+              Blank()
+                .layoutWeight(1)
+              Image($r("sys.media.ohos_ic_public_arrow_right"))
+                .size({ height: 30, width: 30 })
             }
             .width('100%')
             .onClick(() => {

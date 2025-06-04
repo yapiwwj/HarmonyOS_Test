@@ -2,21 +2,21 @@ import type { Order } from "../../../types/usercenter/type"
 
 @Component
 export default struct UnPaid {
-  @State OrderList: Order[] = [{
-    id: 0,
-    img: $r("app.media.waterflow_1"),
-    title: "应县木塔",
-    state: "待付款",
-    price: 100.00
-  },
-    {
-      id: 1,
-      img: $r("app.media.waterflow_1"),
-      title: "珐琅五福瓶",
-      state: "待付款",
-      price: 100.00
-    }]
-
+  // @State OrderList: Order[] = [{
+  //   id: 0,
+  //   img: $r("app.media.waterflow_1"),
+  //   title: "应县木塔",
+  //   state: "待付款",
+  //   price: 100.00
+  // },
+  //   {
+  //     id: 1,
+  //     img: $r("app.media.waterflow_1"),
+  //     title: "珐琅五福瓶",
+  //     state: "待付款",
+  //     price: 100.00
+  //   }]
+  @State OrderList: Order[] =[]
   build() {
     Column() {
       List() {

@@ -1,6 +1,7 @@
 import { NavigationBar } from "../../components/navigationBar"
 import router from '@ohos.router';
-
+import type { RegisterRequest, RegisterResponse } from "../../types/login_register/type"
+import ApiService from '../../utils/ApiService';
 
 // @CustomDialog
 // struct ButtonDialog {
@@ -20,6 +21,7 @@ import router from '@ohos.router';
 
 @Entry
 @Component
+@Preview
 struct Register {
   // dialogController: CustomDialogController = new CustomDialogController({
   //   builder: ButtonDialog(),
@@ -57,6 +59,15 @@ struct Register {
   @State phoneNumber: string = ''
   @State inviteCode: string = ''
   @State select: boolean = false
+
+  register() {
+    const data: RegisterRequest = {
+      username: this.username,
+      password: this.password,
+      phoneNumber: this.phoneNumber
+    }
+    ApiService.post("/harmonyos/register", data)
+  }
 
   build() {
     Column() {
@@ -105,6 +116,7 @@ struct Register {
           .width('100%')
           .margin({ bottom: 10 })
           .onClick(() => {
+            this.register()
             // this.dialogController.open();
           })
 

@@ -3,7 +3,6 @@ import type { CreateSpaceParams } from "../../types/create/type"
 
 @Entry
 @Component
-@Preview
 struct CreateSpace {
   @State preParams: string = JSON.stringify(router.getParams())
   @State params: CreateSpaceParams = JSON.parse(this.preParams)

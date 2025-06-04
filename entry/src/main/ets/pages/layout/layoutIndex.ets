@@ -4,8 +4,9 @@ import UserCenterContent from "../usercenter/UserCenterContent"
 
 @Entry
 @Component
+@Preview
 struct LayoutIndex {
-  @State currentIndex: number = 1;
+  @State currentIndex: number = 0;
 
   @Builder
   tabBuilder(title: string, targetIndex: number, selectedImg: Resource, normalImg: Resource) {

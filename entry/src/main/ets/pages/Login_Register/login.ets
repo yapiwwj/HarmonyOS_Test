@@ -1,5 +1,7 @@
 import { NavigationBar } from "../../components/navigationBar"
 import router from '@ohos.router';
+import type { LoginRequest, LoginResponse } from "../../types/login_register/type"
+import ApiService from '../../utils/ApiService';
 
 @Entry
 @Component
@@ -15,6 +17,19 @@ struct Login {
       .margin({ left: 10, bottom: 10 })
       .textAlign(TextAlign.Start)
       .width("100%")
+  }
+
+  login() {
+    const data: LoginRequest = {
+      username: this.username,
+      password: this.password
+    }
+
+    ApiService.post("/harmonyos/login", data).then((res) => {
+      if (JSON.stringify(res.code) === '200') {
+        router.pushUrl({ url: "pages/layout/layoutIndex" })
+      }
+    })
   }
 
   build() {
@@ -45,7 +60,7 @@ struct Login {
           .width('100%')
           .margin({ top: 20, bottom: 15 })
           .onClick(() => {
-            router.pushUrl({ url: "pages/layout/layoutIndex" })
+            this.login()
           })
 
         Row() {

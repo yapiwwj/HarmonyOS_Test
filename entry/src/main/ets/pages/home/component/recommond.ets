@@ -1,63 +1,22 @@
-import type { GoodsList, ScalerInfoList } from "../../../types/home/component/type"
+import { AxiosError } from '@ohos/axios';
+import type { GoodsList, ScalerInfoList, GoodsListResponse, TreasureList } from "../../../types/home/component/type"
 import { WaterFlowDataSource } from '../../../types/home/component/waterFlow';
+import ApiService from '../../../utils/ApiService';
+import { GetInfo } from '../../../utils/GetInfo';
 
 @Component
 export default struct RecommondContent {
   RecommondScroller: Scroller = new Scroller();
   GoodsScroller: Scroller = new Scroller();
   ScalerScroller: Scroller = new Scroller();
-  private goodsList: GoodsList[] = [
-    {
-      id: 0,
-      img: "app.media.test1",
-      title: "甲辰青绿",
-      subscribe: "1W+",
-      total: 1200,
-      price: 100
-    },
-    {
-      id: 1,
-      img: "app.media.test1",
-      title: "甲辰青绿",
-      subscribe: "1W+",
-      total: 1200,
-      price: 100
-    },
-    {
-      id: 2,
-      img: "app.media.test1",
-      title: "甲辰青绿",
-      subscribe: "1W+",
-      total: 1200,
-      price: 100
-    },
-    {
-      id: 3,
-      img: "app.media.test1",
-      title: "甲辰青绿",
-      subscribe: "1W+",
-      total: 1200,
-      price: 100
-    },
-    {
-      id: 4,
-      img: "app.media.test1",
-      title: "甲辰青绿",
-      subscribe: "1W+",
-      total: 1200,
-      price: 100
-    },
-  ];
-  private scalerInfoList: ScalerInfoList[] = [
-    { id: 0, scalerID: 111, username: "宫廷" },
-    { id: 1, scalerID: 222, username: "紫轩阁" },
-    { id: 2, scalerID: 333, username: "文玩老店" },
-    { id: 3, scalerID: 444, username: "哑舍" },
-    { id: 4, scalerID: 555, username: "古董淘" },
-    { id: 5, scalerID: 666, username: "瓷斋" },
-    { id: 6, scalerID: 777, username: "木雕之王" },
-  ]
-  dataSource: WaterFlowDataSource = new WaterFlowDataSource()
+  @State private goodsList: GoodsList[] = [];
+  @State private scalerInfoList: ScalerInfoList[] = []
+  @State private treasureList: TreasureList[] = []
+  datasource: WaterFlowDataSource = new WaterFlowDataSource()
+  private itemWidthArray: number[] = [];
+  private itemHeightArray: number[] = [];
+  @State minSize: number = 130;
+  @State maxSize: number = 260;
 
   @Builder
   titleBuilder(title: string) {
@@ -82,111 +41,170 @@ export default struct RecommondContent {
     }.width('100%').justifyContent(FlexAlign.Center)
   }
 
+  getGoodsList() {
+    ApiService.get("/harmonyos/goodslist", null)
+      .then((respose: GetInfo) => {
+        this.goodsList = respose.data as GoodsList[]
+      })
+      .catch((error: AxiosError) => {
+        console.log(JSON.stringify(error))
+      })
+  }
+
+  // 计算FlowItem宽/高，使用智能随机算法
+  getSize(prevHeight: number | null = null) {
+    let baseRandom = Math.random();
+    let ret: number;
+    if (prevHeight === null) {
+      // 第一个元素，正常随机生成
+      ret = Math.floor(baseRandom * (this.maxSize - this.minSize)) + this.minSize;
+    } else {
+      // 考虑前一个元素的高度，避免高度差异过大
+      let adjustmentRange = Math.min(30, (this.maxSize - this.minSize) / 2);
+      let minAdjusted = Math.max(this.minSize, prevHeight - adjustmentRange);
+      let maxAdjusted = Math.min(this.maxSize, prevHeight + adjustmentRange);
+      ret = Math.floor(baseRandom * (maxAdjusted - minAdjusted)) + minAdjusted;
+    }
+    return ret;
+  }
+
+  // 设置FlowItem的宽/高数组
+  setItemSizeArray() {
+    let prevHeight: number | null = null;
+    ApiService.get("/harmonyos/treasureList", null).then((res: GetInfo) => {
+      this.treasureList = res.data as TreasureList[]
+      // console.log(this.treasureList.length + "")
+      for (let i = 0; i < this.treasureList.length; i++) {
+        let width = this.getSize();
+        let height = this.getSize(prevHeight);
+        this.itemWidthArray.push(width);
+        this.itemHeightArray.push(height);
+        prevHeight = height;
+      }
+    })
+
+  }
+
+  getScalerInfoList() {
+    ApiService.get("/harmonyos/scalerInfoList", null).then((res: GetInfo) => {
+      this.scalerInfoList = res.data as ScalerInfoList[]
+    }).catch((error: AxiosError) => {
+      console.log(JSON.stringify(error))
+    })
+  }
+
+  // 新增数据，并保存flow item宽/高
+  getTreasureList() {
+    ApiService.get("/harmonyos/treasureList", null).then((res: GetInfo) => {
+      this.treasureList = res.data as TreasureList[]
+      console.log(this.treasureList.length + "")
+    })
+
+    // for (let i = 0; i < this.treasureList.length; i++) {
+    //   this.datasource.updateData(i)
+    // }
+  }
+
+  aboutToAppear() {
+    this.getGoodsList()
+    this.getScalerInfoList()
+    // this.getTreasureList()
+
+    this.setItemSizeArray();
+  }
+
   build() {
     Scroll(this.RecommondScroller) {
       Column() {
-        //商品推荐
-        Column() {
-          this.titleBuilder("商品推荐")
-          Scroll(this.GoodsScroller) {
-            Row() {
-              ForEach(this.goodsList, (item: GoodsList) => {
-                Column() {
-                  // 使用模板渲染每个商品的内容
-                  Image($r(`${item.img}`)).width("100%").objectFit(ImageFit.Contain).borderRadius(8)
-                  Text(item.title).fontWeight(600)
-                  Text(`${item.subscribe}订阅`).fontWeight(400).fontSize(10).fontColor($r("app.color.sub_font"))
-                  Row() {
-                    Row() {
-                      Text("限量")
-                        .backgroundColor($r("app.color.orange_font"))
-                        .fontSize(10)
-                        .fontColor(Color.White)
-                        .padding({ left: 2, right: 5 })
-                        .margin({ right: 2 })
-                        .borderRadius({ topLeft: 8, bottomLeft: 8 })
-                      Text(`${item.total}份`).fontWeight(400).fontSize(10).fontColor($r("app.color.orange_font"))
-                    }
-
-                    Text(`￥${item.price}`).fontWeight(600).fontSize(14).fontColor($r("app.color.orange_font"))
-                  }.justifyContent(FlexAlign.SpaceBetween).width("100%")
-                }.width("33%").alignItems(HorizontalAlign.Start).margin({ left: 10, right: 10 })
-              })
-            }.alignItems(VerticalAlign.Top)
-          }
-          .scrollBarWidth(0)
-          .scrollable(ScrollDirection.Horizontal) // 滚动方向为水平方向
-          .edgeEffect(EdgeEffect.Spring) // 滚动到边沿后回弹
-        }.margin({ bottom: 20 })
-
-        //卖家推荐
-        Column() {
-          this.titleBuilder("卖家推荐")
-
-          Scroll(this.ScalerScroller) {
-            Row() {
-              ForEach(this.scalerInfoList, (item: ScalerInfoList) => {
-                Column() {
-                  // 使用模板渲染每个商品的内容
-                  Image($r("app.media.scaler")).width("100%")
-                  Text(`${item.username}`).padding({ top: 5, bottom: 5 }).fontSize(14)
-                  Text("关注")
-                    .fontSize(12)
-                    .backgroundColor($r("app.color.orange_font"))
-                    .fontColor(Color.White)
-                    .padding({ left: 5, right: 5 })
-                    .borderRadius(8)
-
-                }.width("20%").alignItems(HorizontalAlign.Center).margin({ left: 5, right: 5 })
-              })
-            }.alignItems(VerticalAlign.Top)
-          }
-          .scrollBarWidth(0)
-          .scrollable(ScrollDirection.Horizontal) // 滚动方向为水平方向
-          .edgeEffect(EdgeEffect.Spring) // 滚动到边沿后回弹
-        }.margin({ bottom: 20 })
+        // //商品推荐
+        // Column() {
+        //   this.titleBuilder("商品推荐")
+        //   Scroll(this.GoodsScroller) {
+        //     Row() {
+        //       ForEach(this.goodsList, (item: GoodsList) => {
+        //         Column() {
+        //           // 使用模板渲染每个商品的内容
+        //           Image(`${item.img}`).width("120").objectFit(ImageFit.Contain).borderRadius(8)
+        //           Text(item.title).fontWeight(600)
+        //           Text(`${item.subscribe}订阅`).fontWeight(400).fontSize(10).fontColor($r("app.color.sub_font"))
+        //           Row() {
+        //             Row() {
+        //               Text("限量")
+        //                 .backgroundColor($r("app.color.orange_font"))
+        //                 .fontSize(10)
+        //                 .fontColor(Color.White)
+        //                 .padding({ left: 2, right: 5 })
+        //                 .margin({ right: 2 })
+        //                 .borderRadius({ topLeft: 8, bottomLeft: 8 })
+        //               Text(`${item.total}份`).fontWeight(400).fontSize(10).fontColor($r("app.color.orange_font"))
+        //             }
+        //
+        //             Text(`￥${item.price}`).fontWeight(600).fontSize(14).fontColor($r("app.color.orange_font"))
+        //           }.justifyContent(FlexAlign.SpaceBetween).width("100%")
+        //         }.width("33%").alignItems(HorizontalAlign.Start).margin({ left: 10, right: 10 })
+        //       })
+        //     }.alignItems(VerticalAlign.Top)
+        //   }
+        //   .scrollBarWidth(0)
+        //   .scrollable(ScrollDirection.Horizontal) // 滚动方向为水平方向
+        //   .edgeEffect(EdgeEffect.Spring) // 滚动到边沿后回弹
+        // }.margin({ bottom: 20 })
+        //
+        // //卖家推荐
+        // Column() {
+        //   this.titleBuilder("卖家推荐")
+        //
+        //   Scroll(this.ScalerScroller) {
+        //     Row() {
+        //       ForEach(this.scalerInfoList, (item: ScalerInfoList) => {
+        //         Column() {
+        //           // 使用模板渲染每个商品的内容
+        //           Image(item.avatar).width(60).height(60).objectFit(ImageFit.Contain).borderRadius(90)
+        //           Text(`${item.username}`).padding({ top: 5, bottom: 5 }).fontSize(14)
+        //           Text("关注")
+        //             .fontSize(12)
+        //             .backgroundColor($r("app.color.orange_font"))
+        //             .fontColor(Color.White)
+        //             .padding({ left: 5, right: 5 })
+        //             .borderRadius(8)
+        //
+        //         }.width("20%").alignItems(HorizontalAlign.Center).margin({ left: 5, right: 5 })
+        //       })
+        //     }.alignItems(VerticalAlign.Top)
+        //   }
+        //   .scrollBarWidth(0)
+        //   .scrollable(ScrollDirection.Horizontal) // 滚动方向为水平方向
+        //   .edgeEffect(EdgeEffect.Spring) // 滚动到边沿后回弹
+        // }.margin({ bottom: 20 })
 
         //甄品推荐
         Column() {
           this.titleBuilder("甄品推荐")
-          WaterFlow({ footer: this.itemFoot.bind(this) }) {
-            LazyForEach(this.dataSource, (item: Resource, index: number) => {
+          WaterFlow() {
+            LazyForEach(this.datasource, (item: number) => {
               FlowItem() {
                 Column() {
-                  Image(item).objectFit(ImageFit.Fill).borderRadius({ topLeft: 8, topRight: 8 })
-                  Column() {
-                    Text("甲辰青绿").fontWeight(600)
-                    Text("1w+订阅").fontColor($r("app.color.sub_font")).fontSize(10).margin({ bottom: 10 })
-                    Row() {
-                      Row() {
-                        Text("限量")
-                          .backgroundColor($r("app.color.orange_font"))
-                          .fontSize(10)
-                          .fontColor(Color.White)
-                          .padding({ left: 2, right: 5 })
-                          .margin({ right: 2 })
-                          .borderRadius({ topLeft: 8, bottomLeft: 8 })
-                        Text("100份")
-                          .fontWeight(400)
-                          .fontSize(10)
-                          .fontColor($r("app.color.orange_font"))
-                      }
-
-                      Text("￥100").fontWeight(600).fontSize(14).fontColor($r("app.color.orange_font"))
-                    }.justifyContent(FlexAlign.SpaceBetween).width("100%")
-                  }.padding(10).alignItems(HorizontalAlign.Start)
+                  Text("N" + item).fontSize(12).height('16')
+                  // 存在对应的文件才会显示图片
+                  // Image($r('app.media.phone4'))
+                  //   .objectFit(ImageFit.Fill)
+                  //   .width('100%')
+                  //   .layoutWeight(1)
                 }
-                .borderRadius(8)
-                .justifyContent(FlexAlign.Start)
-                .alignItems(HorizontalAlign.Start)
-                .shadow({ radius: 10, color: Color.Gray })
               }
-            })
-          }.columnsTemplate("1fr 1fr").columnsGap(10).rowsGap(10)
+              .width('100%')
+              .height(this.itemHeightArray[item % 100])
+            }, (item: string) => item)
+          }
+          .columnsTemplate("1fr 1fr")
+          .columnsGap(10)
+          .rowsGap(5)
+          .backgroundColor(0xFAEEE0)
+          .width('100%')
+          .height('100%')
 
         }.margin({ bottom: 20 })
-      }.width("100%").justifyContent(FlexAlign.Start)
+      }.width("100%").height("100%").justifyContent(FlexAlign.Start)
     }
-
   }
 }

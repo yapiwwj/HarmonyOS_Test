@@ -6,6 +6,7 @@ struct CustomDialogExample {
   }
   confirm: () => void = () => {
   }
+
   build() {
     Column() {
       Text('这是自定义弹窗')
@@ -21,17 +22,22 @@ struct CustomDialogExample {
     }
   }
 }
+
 @Entry
 @Component
 struct CustomDialogUser {
   dialogController: CustomDialogController | null = new CustomDialogController({
     builder: CustomDialogExample({
-      cancel: ()=> { this.onCancel() },
-      confirm: ()=> { this.onAccept() }
+      cancel: () => {
+        this.onCancel()
+      },
+      confirm: () => {
+        this.onAccept()
+      }
     }),
     cancel: this.existApp,
     autoCancel: true,
-    onWillDismiss:(dismissDialogAction: DismissDialogAction)=> {
+    onWillDismiss: (dismissDialogAction: DismissDialogAction) => {
       console.info("reason=" + JSON.stringify(dismissDialogAction.reason))
       console.log("dialog onWillDismiss")
       if (dismissDialogAction.reason == DismissReason.PRESS_BACK) {
@@ -48,28 +54,30 @@ struct CustomDialogUser {
     width: 300,
     height: 200,
     borderWidth: 1,
-    borderStyle: BorderStyle.Dashed,//使用borderStyle属性，需要和borderWidth属性一起使用
-    borderColor: Color.Blue,//使用borderColor属性，需要和borderWidth属性一起使用
+    borderStyle: BorderStyle.Dashed, //使用borderStyle属性，需要和borderWidth属性一起使用
+    borderColor: Color.Blue, //使用borderColor属性，需要和borderWidth属性一起使用
     backgroundColor: Color.White,
-    shadow: ({ radius: 20, color: Color.Grey, offsetX: 50, offsetY: 0}),
+    shadow: ({
+      radius: 20,
+      color: Color.Grey,
+      offsetX: 50,
+      offsetY: 0
+    }),
   })
+
   // 在自定义组件即将析构销毁时将dialogController置空
   aboutToDisappear() {
     this.dialogController = null // 将dialogController置空
   }
 
-
   onCancel() {
   }
-
 
   onAccept() {
   }
 
-
   existApp() {
   }
-
 
   build() {
     Column() {

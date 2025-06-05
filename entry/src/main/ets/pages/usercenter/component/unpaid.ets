@@ -16,7 +16,8 @@ export default struct UnPaid {
   //     state: "待付款",
   //     price: 100.00
   //   }]
-  @State OrderList: Order[] =[]
+  @State OrderList: Order[] = []
+
   build() {
     Column() {
       List() {

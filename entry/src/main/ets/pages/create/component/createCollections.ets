@@ -1,5 +1,7 @@
 import type { CreateCard } from "../../../types/create/type"
 import { router } from '@kit.ArkUI'
+import ApiService from '../../../utils/ApiService'
+import { GetInfo } from '../../../utils/GetInfo'
 
 let CardTopRules: Record<string, Record<string, string | VerticalAlign | HorizontalAlign>> = {
   'top': { 'anchor': '__container__', 'align': VerticalAlign.Top },
@@ -11,37 +13,20 @@ let CardBottomRules: Record<string, Record<string, string | VerticalAlign | Hori
   'bottom': { 'anchor': '__container__', 'align': HorizontalAlign.End }
 }
 
+
 @Component
 export default struct CrerateCollections {
-  @State CreateCardList: CreateCard[] = [
-    {
-      id: 0,
-      title: "日暮长城",
-      subtitle: "中国·长城",
-      type: "图文",
-      form: "明信片",
-      views: 6.2,
-      cardImage: $r("app.media.card1"),
-    },
-    {
-      id: 1,
-      title: "泰姬陵",
-      subtitle: "印度",
-      type: "图文",
-      form: "明信片",
-      views: 6.2,
-      cardImage: $r("app.media.card2")
-    },
-    {
-      id: 0,
-      title: "自由女神像",
-      subtitle: "美国",
-      type: "图文",
-      form: "明信片",
-      views: 6.2,
-      cardImage: $r("app.media.card3")
-    }
-  ]
+  @State CreateCardList: CreateCard[] = []
+
+  getCreateCardList() {
+    ApiService.get("/harmonyos/create_cardlist", null).then((res: GetInfo) => {
+      this.CreateCardList = res.data as CreateCard[]
+    })
+  }
+
+  aboutToAppear(): void {
+    this.getCreateCardList()
+  }
 
   build() {
     Column() {

@@ -4,7 +4,6 @@ import UserCenterContent from "../usercenter/UserCenterContent"
 
 @Entry
 @Component
-@Preview
 struct LayoutIndex {
   @State currentIndex: number = 0;
 
